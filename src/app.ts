@@ -1,10 +1,11 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import { Router } from 'express';
 
 export default class App {
     private app: express.Application;
 
-    constructor(routers: Array<any>) {
+    constructor(routers: Array<Router>) {
         this.app = express();
         this.initializeMiddlewares();
         this.initializeRouters(routers);
