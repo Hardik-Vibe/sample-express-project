@@ -1,0 +1,1 @@
+Sample express application based on MVC pattern.
