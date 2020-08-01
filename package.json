@@ -8,7 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start.dev": "cp .env.dev .env && nodemon",
     "build": "rimraf ./build && tsc",
-    "start": "cp .env.dev .env && npm run build && node build/index.js"
+    "start": "cp .env.dev .env && npm run build && node build/index.js",
+    "start.docker": "docker build -t node/web-app . && docker run -p 3000:3000 node/web-app",
+    "build.docker": "cp .env.docker .env && npm run build && node build/index.js"
   },
   "keywords": [],
   "author": "",
