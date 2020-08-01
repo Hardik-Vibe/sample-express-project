@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "sourceMap": true,
+    "sourceMap": false,
     "target": "es5",
     "outDir": "./build",
     "baseUrl": "./src",
