@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { LoggerHelper } from './logger.helper';
 
 export default class DBHelper {
     static initializeConnection (dbUri: string, dbName: string) {
@@ -10,14 +11,14 @@ export default class DBHelper {
             useCreateIndex: true
         })
         .then(() => {
-            //console.log('db connected');
-        }).catch((err) => {
-            //console.log(err.message);
+            LoggerHelper.logger.info('db connected');
+        }).catch((err: Error) => {
+            LoggerHelper.logger.error(err);
         });
 
-        mongoose.connection.on('connected', () => console.log('db connected'));
-        mongoose.connection.on('error', (err) => console.log(err.message));
-        mongoose.connection.on('disconnected', () => console.log('db disconnected'));
+        mongoose.connection.on('connected', () => LoggerHelper.logger.info('db connected'));
+        mongoose.connection.on('error', (err) => LoggerHelper.logger.error(err));
+        mongoose.connection.on('disconnected', () => LoggerHelper.logger.info('db disconnected'));
 
         process.on('SIGINT', async () => {
             await mongoose.connection.close();

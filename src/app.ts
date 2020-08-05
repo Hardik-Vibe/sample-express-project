@@ -4,9 +4,8 @@ import { Router } from 'express';
 import * as HTTP_ERRORS from 'http-errors';
 import * as dotenv from 'dotenv';
 import DBHelper from './helpers/db.helper';
-import { IError } from './interfaces/IError';
 import AccessLogsHelper from './helpers/access-logs.helper';
-import path from 'path';
+import { LoggerHelper } from './helpers/logger.helper';
 
 export default class App {
     private app: express.Application;
@@ -27,7 +26,7 @@ export default class App {
 
     private listen() {
         this.app.listen(process.env.PORT || 3000, () => {
-            //console.log(`App started on ${process.env.PORT || 3000}`);
+            LoggerHelper.logger.info(`App started on ${process.env.PORT || 3000}`);
         })
     }
 
@@ -43,7 +42,7 @@ export default class App {
         this.app.use(express.json());
         this.app.use(compression());
         this.app.disable('x-powered-by');
-        this.app.use(AccessLogsHelper.getAccessLogger(path.join(__dirname, 'logs', process.env.ENV, '/access-%DATE%.log')));
+        this.app.use(AccessLogsHelper.getAccessLogger());
     }
 
     private initializeHelpers() {
@@ -51,17 +50,10 @@ export default class App {
     }
 
     private initializeErrorHandlers () {
-        this.app.use(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-            next(new HTTP_ERRORS.NotFound());
+        this.app.use(async (err: HTTP_ERRORS.HttpError, req: express.Request, res: express.Response, next: express.NextFunction) => {
+            LoggerHelper.logger.error(err);
+            next(err);
         });
-
-        this.app.use((err: IError, req: express.Request, res: express.Response) => {
-            res.status(err.status || 500);
-            res.send({
-                status: err.status || 500,
-                message: err.message
-            });
-        })
     }
 
     

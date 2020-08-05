@@ -1,21 +1,14 @@
-import morgan from 'morgan';
 import { Handler } from 'express';
+import { LoggerHelper  } from './logger.helper';
 
 export default class AccessLogsHelper {
     // public var 
     static httpLogger: Handler;
-    static getAccessLogger(fileLocation: string) {
-        console.log(__dirname);
+    static getAccessLogger() {
         // morgan logger for access logs
-        const accessLogStream = require('file-stream-rotator').getStream({
-            date_format: 'YYYYMMDD',
-            filename: fileLocation,
-            frequency: 'daily',
-            verbose: false
-        });
-        this.httpLogger = morgan(
+        this.httpLogger = require('morgan')(
             ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent"', {
-            stream: accessLogStream
+            stream: LoggerHelper.stream
         });
         return this.httpLogger;
     }
