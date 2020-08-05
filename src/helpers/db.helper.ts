@@ -1,4 +1,4 @@
-import * as mongoose from 'mongoose';
+import mongoose from 'mongoose';
 
 export default class DBHelper {
     static initializeConnection (dbUri: string, dbName: string) {
@@ -10,9 +10,9 @@ export default class DBHelper {
             useCreateIndex: true
         })
         .then(() => {
-            console.log('db connected');
+            //console.log('db connected');
         }).catch((err) => {
-            console.log(err.message);
+            //console.log(err.message);
         });
 
         mongoose.connection.on('connected', () => console.log('db connected'));

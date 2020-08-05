@@ -5,7 +5,7 @@ export default class UserRouter {
     // static
     static path = '/users';
     static router = Router();
-    static getRouter () {
+    static getRouter(): Router {
         const userController: UserController = new UserController();
         this.router.get(`${this.path}`, userController.index.bind(userController));
         this.router.get(`${this.path}/:id`, userController.findOne.bind(userController));

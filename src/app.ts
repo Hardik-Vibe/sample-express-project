@@ -1,9 +1,12 @@
-import * as express from 'express';
+import express from 'express';
+import compression from 'compression';
 import { Router } from 'express';
 import * as HTTP_ERRORS from 'http-errors';
-import * as morgan from 'morgan';
 import * as dotenv from 'dotenv';
 import DBHelper from './helpers/db.helper';
+import { IError } from './interfaces/IError';
+import AccessLogsHelper from './helpers/access-logs.helper';
+import path from 'path';
 
 export default class App {
     private app: express.Application;
@@ -13,6 +16,10 @@ export default class App {
         this.app = express();
         this.initializeMiddlewares();
         this.initializeRouters(routers);
+        this.appOnInit();
+    }
+
+    appOnInit(): void {
         this.initializeHelpers();
         this.initializeErrorHandlers();
         this.listen();
@@ -20,7 +27,7 @@ export default class App {
 
     private listen() {
         this.app.listen(process.env.PORT || 3000, () => {
-            console.log(`App started on ${process.env.PORT || 3000}`);
+            //console.log(`App started on ${process.env.PORT || 3000}`);
         })
     }
 
@@ -28,25 +35,27 @@ export default class App {
         return this.app;
     }
 
-    private initializeRouters (routers: Array<any>) {
+    private initializeRouters (routers: Array<Router>) {
         routers.forEach((router) => this.app.use('/', router))
     }
 
     private  initializeMiddlewares() {
         this.app.use(express.json());
+        this.app.use(compression());
+        this.app.disable('x-powered-by');
+        this.app.use(AccessLogsHelper.getAccessLogger(path.join(__dirname, 'logs', process.env.ENV, '/access-%DATE%.log')));
     }
 
     private initializeHelpers() {
-        this.app.use(morgan('dev'));
         DBHelper.initializeConnection(process.env.DB_URI, process.env.DB_NAME);
     }
 
     private initializeErrorHandlers () {
-        this.app.use(async (req, res, next) => {
+        this.app.use(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
             next(new HTTP_ERRORS.NotFound());
         });
 
-        this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+        this.app.use((err: IError, req: express.Request, res: express.Response) => {
             res.status(err.status || 500);
             res.send({
                 status: err.status || 500,
@@ -54,4 +63,6 @@ export default class App {
             });
         })
     }
+
+    
 }

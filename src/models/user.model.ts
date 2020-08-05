@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 
 export default class UserModel {
-    schema: mongoose.Schema<any> = null;
+    schema: mongoose.Schema<mongoose.SchemaDefinition> = null;
     model: mongoose.Model<mongoose.Document, {}> = null;
     constructor( ) {
         this.schema = new mongoose.Schema({
