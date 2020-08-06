@@ -1,6 +1,4 @@
 import App from './app';
-import UserRouter from './routers/user.router';
+import Routers from './modules/index';
 
-new App([
-    UserRouter.getRouter()
-])
+new App(Routers);

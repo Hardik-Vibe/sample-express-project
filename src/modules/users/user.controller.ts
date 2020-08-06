@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import UserModel  from '../models/user.model';
+import UserModel  from './user.model';
 import * as HTTP_ERRORS from 'http-errors';
 
 export default class UserController {
