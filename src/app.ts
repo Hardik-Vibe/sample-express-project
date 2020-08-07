@@ -1,11 +1,11 @@
 import express from 'express';
 import compression from 'compression';
 import { Router } from 'express';
-import * as HTTP_ERRORS from 'http-errors';
 import * as dotenv from 'dotenv';
 import DBHelper from './helpers/db.helper';
 import AccessLogsHelper from './helpers/access-logs.helper';
 import { LoggerHelper } from './helpers/logger.helper';
+import { ErrorHandlerHelper } from './helpers/error-handler.helper';
 
 export default class App {
     private app: express.Application;
@@ -20,7 +20,6 @@ export default class App {
 
     appOnInit(): void {
         this.initializeHelpers();
-        this.initializeErrorHandlers();
         this.listen();
     }
 
@@ -35,26 +34,19 @@ export default class App {
     }
 
     private initializeRouters (routers: Array<Router>) {
-        routers.forEach((router) => this.app.use('/', router))
+        routers.forEach((router) => this.app.use('/', router));
     }
 
     private  initializeMiddlewares() {
         this.app.use(express.json());
         this.app.use(compression());
         this.app.disable('x-powered-by');
-        this.app.use(AccessLogsHelper.getAccessLogger());
     }
 
     private initializeHelpers() {
+        this.app.use(AccessLogsHelper.getAccessLogger());
+        this.app.use(ErrorHandlerHelper.handleError.bind(this));
         DBHelper.initializeConnection(process.env.DB_URI, process.env.DB_NAME);
     }
-
-    private initializeErrorHandlers () {
-        this.app.use(async (err: HTTP_ERRORS.HttpError, req: express.Request, res: express.Response, next: express.NextFunction) => {
-            LoggerHelper.logger.error(err);
-            next(err);
-        });
-    }
-
     
 }

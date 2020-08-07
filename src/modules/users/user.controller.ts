@@ -12,7 +12,7 @@ export default class UserController {
     public async index(req: Request, res: Response, next: NextFunction) {
         try {
             const users = await this.user.model.find();
-            res.send(users);
+            res.status(200).send(users);
         } catch (err) {
             next(new HTTP_ERRORS.InternalServerError());
         }
@@ -23,7 +23,7 @@ export default class UserController {
             const { id } = req.params;
             const user = await this.user.model.findById(id);
             if (!user) throw new HTTP_ERRORS.NotFound(); 
-            res.send(user);
+            res.status(200).send(user);
         } catch (err) {
             next(err);
         }
