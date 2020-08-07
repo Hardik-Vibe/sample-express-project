@@ -1,7 +1,7 @@
 import { Handler } from 'express';
-import { LoggerHelper  } from './logger.helper';
+import { LoggerHelper  } from '../helpers/logger.helper';
 
-export default class AccessLogsHelper {
+export default class AccessLogsMiddleware {
     // public var 
     static httpLogger: Handler;
     static getAccessLogger() {
